@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P-Cube</title>
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- CENTRAL NOTIFICATION BAR -->
+    <div id="notification-bar" style="display: none;">
+        <span></span>
+    </div>
+
+    <!-- Header & Streak Counter (Visible on Content Pages) -->
+    <header id="app-header" style="display: none;">
+        <div class="header-left">
+            <h1>P-CUBE🌿</h1>
+            <div class="streak-display">
+                Total Streaks: <span id="streak-count">0</span> 🔥
+            </div>
+        </div>
+        <!-- User Profile Placeholder -->
+        <div class="user-profile-container">
+            <div class="user-profile" onclick="toggleProfileMenu()">
+                <span id="profile-name">Guest</span>
+                <div class="profile-icon">👤</div>
+            </div>
+            <!-- Profile Dropdown Menu -->
+            <div id="profile-menu" class="profile-menu-dropdown">
+                <button onclick="viewProfileDetails()">View Details</button>
+                <button onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page 1A: Login -->
+    <div id="login-page" class="page active">
+        <h2>Welcome Back!</h2>
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button onclick="handleLogin()" class="btn-green">Login</button>
+        <button onclick="showRegisterForm()" class="btn-darkred">Register</button>
+    </div>
+
+    <!-- Page 1B: Registration Form -->
+    <div id="register-page" class="page" style="display: none;">
+        <h2>Create Your EcoStreak Account</h2>
+        <p style="color: var(--color-darkred); font-weight: bold; text-align: center;">
+            All your details, especially emergency and location data, will be kept strictly private.
+        </p>
+        <div class="registration-form">
+            <!-- Authentication Fields -->
+            <input type="email" id="reg-email" placeholder="Mail ID (Email)" required>
+            <input type="password" id="reg-password" placeholder="Password" required>
+            
+            <!-- Personal Fields -->
+            <input type="text" id="reg-username" placeholder="User Name" required>
+            <input type="number" id="reg-age" placeholder="Age" min="13" required>
+            <input type="text" id="reg-country" placeholder="Country" required>
+            <input type="text" id="reg-location" placeholder="City/Location (e.g., Coimbatore)" required>
+            <input type="text" id="reg-address" placeholder="Address" required>
+            <input type="text" id="reg-contact" placeholder="Contact Number (e.g., +91 999 000)" required>
+            <input type="text" id="reg-emergency" placeholder="Emergency Contact Number" required>
+
+            <button onclick="handleRegistration()" class="btn-green" style="margin-top: 20px;">
+                Complete Registration
+            </button>
+            <button onclick="showLoginPage()" class="btn-darkred-link">
+                Back to Login
+            </button>
+        </div>
+    </div>
+
+    <!-- Page 2: Eco-Action Dashboard -->
+    <div id="dashboard-page" class="page" style="display: none;">
+        <nav class="sub-nav">
+            <button class="nav-btn" data-target="dashboard-page">Actions</button>
+            <button class="nav-btn" data-target="sharing-page">Community</button>
+            <button class="nav-btn" data-target="travelo-page">Travelo</button>
+            <button class="nav-btn" data-target="rewards-page">Rewards</button>
+            <!-- 🆕 NEW BUTTON -->
+            <button class="nav-btn" data-target="rules-page">Rules</button> 
+        </nav>
+        <h3>Your Eco Actions Today:</h3>
+        <div class="card-container">
+            
+            <div class="action-card planted-card">
+                <div class="card-icon">🌳</div>
+                <h4>Planted</h4>
+                <p>Upload your photo to track impact. (2 Streaks)</p>
+                <input type="file" id="planted-photo" accept="image/*">
+                <input type="text" id="tree-name" placeholder="Tree Name">
+                <button onclick="validateAndLogPlanting()" class="btn-card green-bg">Post & Validate</button>
+                <small class="ai-feedback" id="plant-ai-feedback">Awaiting AI validation...</small>
+            </div>
+
+            <div class="action-card water-card">
+                <div class="card-icon">💧</div>
+                <h4>Water Warrior</h4>
+                <p>Verify water saving actions (1 Streak)</p>
+                <input type="file" id="water-photo" accept="image/*">
+                <button onclick="validateAndLogWaterSaving()" class="btn-card darkred-bg">Post & Validate</button>
+                <small class="ai-feedback" id="water-ai-feedback"></small>
+            </div>
+
+            <div class="action-card reporter-card">
+                <div class="card-icon">🚨</div>
+                <h4>Reporter</h4>
+                <p>Report issues (geo-tagged) to an authority email.</p>
+                <input type="email" id="reporter-email" placeholder="Recipient Email ID" required>
+                <textarea id="reporter-description" placeholder="Description with Geo-Tag"></textarea>
+                <button onclick="sendReport()" class="btn-card green-bg">Send Report</button>
+                <small class="ai-feedback" id="report-feedback"></small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 3: Community Sharing & Reuse -->
+    <div id="sharing-page" class="page" style="display: none;">
+        <nav class="sub-nav">
+            <button class="nav-btn" data-target="dashboard-page">Actions</button>
+            <button class="nav-btn" data-target="sharing-page">Community</button>
+            <button class="nav-btn" data-target="travelo-page">Travelo</button>
+            <button class="nav-btn" data-target="rewards-page">Rewards</button>
+            <!-- 🆕 NEW BUTTON -->
+            <button class="nav-btn" data-target="rules-page">Rules</button>
+        </nav>
+        <h3>Community Reuse Hub (5 Streaks per FREE item)</h3>
+        <div class="column-container">
+            <!-- Oldy Cloth (Free Share) -->
+            <div class="column white-bg black-text">
+                <h4>👕 Oldy Cloth</h4>
+                <p>Give away clothes to nearby users for free.</p>
+                <input type="file" id="cloth-photo" accept="image/*">
+                <input type="text" id="cloth-item-name" placeholder="Cloth Description" required>
+                <button onclick="shareItem('Cloth')" class="btn-darkred">Give Away FREE (5 Streaks)</button>
+            </div>
+
+            <!-- Usable Products (Free/Rent/Sell) -->
+            <div class="column green-bg">
+                <h4>🛠️ Usable Products</h4>
+                <p>List items (electronics, books, etc.).</p>
+                <input type="file" id="product-photo" accept="image/*">
+                <input type="text" id="product-item-name" placeholder="Product Name" required>
+                <select id="product-listing-type">
+                    <option>For Free</option>
+                    <option>For Rent</option>
+                    <option>For Sale</option>
+                </select>
+                <button onclick="shareItem('Product')" class="btn-darkred">List Product</button>
+            </div>
+
+            <!-- Precious Food (Half/Quarter Price) -->
+            <div class="column red-bg">
+                <h4>🍎 Precious Food</h4>
+                <p>Sell surplus food at a discount.</p>
+                <input type="file" id="food-photo" accept="image/*"> 
+                <input type="text" id="food-item-name" placeholder="Food Item Name" required> 
+                <input type="number" id="food-original-price" placeholder="Original Price" min="1">
+                <select id="food-discount-type">
+                    <option>Half Price</option>
+                    <option>Quarter Price</option>
+                </select>
+                <button onclick="shareItem('Food')" class="btn-darkred">List Food</button>
+            </div>
+        </div>
+
+        <hr style="margin: 30px 0;">
+        <h3>Latest Community Posts 🌎</h3>
+        <div id="shared-items-feed" class="card-container">
+            <p>Loading shared items...</p>
+        </div>
+    </div>
+
+    <!-- Page 4: Travelo -->
+    <div id="travelo-page" class="page" style="display: none;">
+        <nav class="sub-nav">
+            <button class="nav-btn" data-target="dashboard-page">Actions</button>
+            <button class="nav-btn" data-target="sharing-page">Community</button>
+            <button class="nav-btn" data-target="travelo-page">Travelo</button>
+            <button class="nav-btn" data-target="rewards-page">Rewards</button>
+            <!-- 🆕 NEW BUTTON -->
+            <button class="nav-btn" data-target="rules-page">Rules</button>
+        </nav>
+        <h3>Travelo: Your Eco-Friendly Guide</h3>
+        <div class="column-container">
+             <!-- Restaurant Finder -->
+            <div class="column green-bg">
+                <h4>🍽️ Restaurant Finder</h4>
+                <p>Find nearby Vegan or Non-Vegan restaurants.</p>
+                <button onclick="findRestaurants()" class="btn-darkred">Search Now</button>
+                <small id="restaurant-feedback" style="margin-top: 10px; color: var(--color-white);"></small>
+            </div>
+            <!-- Step Tracker -->
+            <div class="column white-bg black-text">
+                <h4>🚶 Step Tracker</h4>
+                <p>Overall Steps Walked: <span id="steps-walked">0</span></p>
+                <p>Walk more, get rewarded!</p>
+            </div>
+        </div>
+        <p style="margin-top: 20px;"><small>*Step counting and rewards are simulated.</small></p>
+    </div>
+
+    <!-- Page 5: Rewards & Boost -->
+    <div id="rewards-page" class="page" style="display: none;">
+        <nav class="sub-nav">
+            <button class="nav-btn" data-target="dashboard-page">Actions</button>
+            <button class="nav-btn" data-target="sharing-page">Community</button>
+            <button class="nav-btn" data-target="travelo-page">Travelo</button>
+            <button class="nav-btn" data-target="rewards-page">Rewards</button>
+            <!-- 🆕 NEW BUTTON -->
+            <button class="nav-btn" data-target="rules-page">Rules</button>
+        </nav>
+        <h3>🏆 Total Rewards & Boosts</h3>
+
+        <div class="reward-box darkred-bg">
+            <h4>💰 Your Total Reward Potential (6 Months)</h4>
+            <p>Achieve **6000 Streaks** to unlock a reward of RS.500!</p>
+            <p>Current 6-Month Projection: RS.XX.XX</p>
+        </div>
+
+        <div class="boost-section">
+            <h4>🚀 Need a Streak Boost?</h4>
+            <p>Complete these high-impact challenges to accelerate your progress towards the RS.500 goal.</p>
+
+            <div class="column-container">
+                <div class="column green-bg">
+                    <h5>Mega Planting Day (+50 Streaks)</h5>
+                    <p>Upload 5 distinct planted photos in one day.</p>
+                    <button class="btn-darkred">Activate Challenge</button>
+                </div>
+                <div class="column white-bg black-text">
+                    <h5>Community Champion (+100 Streaks)</h5>
+                    <p>Successfully give away 3 items (Cloth or Product) for FREE this week.</p>
+                    <button class="btn-green">View Details</button>
+                </div>
+            </div>
+        </div>
+
+        <hr style="border-top: 1px solid #ccc; margin: 30px 0;">
+    </div>
+
+    <!-- 🆕 Page 6: Rules -->
+    <div id="rules-page" class="page" style="display: none;">
+        <nav class="sub-nav">
+            <button class="nav-btn" data-target="dashboard-page">Actions</button>
+            <button class="nav-btn" data-target="sharing-page">Community</button>
+            <button class="nav-btn" data-target="travelo-page">Travelo</button>
+            <button class="nav-btn" data-target="rewards-page">Rewards</button>
+            <!-- 🆕 NEW BUTTON -->
+            <button class="nav-btn" data-target="rules-page">Rules</button>
+        </nav>
+        <h2>📜 EcoStreak Program Rules</h2>
+        <div class="rules-container">
+            <ol>
+                <li>Rule 1: Streak Maintenance: Every 5 days once you should maintain the streak.</li>
+                <li>Rule 2: Streak Reduction:If you fail to maintain the streak, your streak will be reduced as half of the streaks or 50% of the streaks that you have saved in the previous days.</li>
+                <li>Rule 3: Invalid Submissions: If you posted the same pictures or a wrong picture(not meeting criteria), you will not be gaining any streak.</li>
+                <li>Rule 4: Fraudulent Activity: Regularly uploading fake posts will result in you being noticed and banned from the program.</li>
+                <li>Rule 5: Reward Eligibility: You should not take any break before completing 6000 streaks to get the reward. If you take any break, you will not be rewarded.</li>
+            </ol>
+            <p class="warning-text">⚠️ These rules are strictly enforced for reward eligibility.</p>
+        </div>
+    </div>
+    
+    <!-- Footer with Customer Care (visible only on rewards page) -->
+    <footer id="app-footer" style="display: none;">
+        <div class="customer-care">
+            <h4>📞 Customer Care & Support</h4>
+            <p>Need help with streaks, rewards, or an app feature?</p>
+            <ul>
+                <li>Email Support: <a href="mailto:support@ecostreak.com">support@ecostreak.com</a></li>
+                <li>Help Center: Visit our comprehensive FAQ <a href="#">here</a>.</li>
+                <li>Live Chat: Available Mon-Fri, 9am-5pm EST (simulated).</li>
+            </ul>
+        </div>
+        <p class="footer-note"><small>Reward payouts are processed quarterly based on verified streak completion and adherence to terms.</small></p>
+    </footer>
+    
+    <!-- Link to the external JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
